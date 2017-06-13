@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+</head>
+<body>
+
+    <script>
+        var arr = [85, 60, 99, 49, 77, 82, 22, 13];
+        var w = 900,
+            h = 500,
+            p = 100;
+
+        svg();
+        bind();
+        render();
+
+        function svg() {
+            d3.select("body")
+                .append("svg")
+                .attr({
+                    width: w,
+                    height: h,
+                    id: "bar-chart"
+                })
+        }
+
+        function bind(sataSet) {
+            var selection = d3.select("svg#bar-chart")
+                .selectAll("rect")
+                .data(arr);
+            selection.enter().append("rect");
+            selection.exit().remove();
+
+            //-----------文字-----------
+
+            var selection_t = d3.select("svg#bar-chart")
+                .selectAll("text")
+                .data(arr);
+            selection_t.enter().append("text");
+            selection_t.exit().remove();
+        }
+
+        function render() {
+            d3.selectAll("#bar-chart>rect")
+                .attr({
+                    x: function(d, i) {
+                        return p + 45 * i;
+                    },
+                    y: function(d, i) {
+                        return h - p - d;
+                    },
+                    width: 40,
+                    height: function(d) {
+                        return d;
+                    },
+                    fill: function(d) {
+                        if (d < 70) {
+                            return "red";
+                        } else {
+                            return "lightgreen";
+                        }
+                    }
+                });
+
+            d3.selectAll("#bar-chart>text")
+                .attr({
+                    x: function(d, i) {
+                        return p + 45 * i + 10;
+                    },
+                    y: function(d) {
+                        return h - p + 20;
+                    },
+
+                })
+                .text(function(d) {
+                    return d;
+                });
+        }
+
+        function random(N, M) {
+            return Math.floor(Math.random() * (M - N + 1) + N);
+        }
+
+        function update() {
+            var num = random(10, 100);
+            arr.push(num);
+            bind(arr);
+            render();
+        }
+
+        function delete_arr() {
+            arr.shift();
+            bind(arr);
+            render();
+        }
+
+    </script>
+    
+    <input type="button" value="新增" onclick="update()">
+    <input type="button" value="移除" onclick="delete_arr()">
+
+</body>
+</html>
