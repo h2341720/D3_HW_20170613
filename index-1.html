@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JS Bin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+</head>
+
+<body>
+
+
+    <script>
+        var arr1 = [85, 60, 99, 49, 77, 82, 22, 13];
+        var w = 900,
+            h = 500,
+            p = 100;
+
+        svg();
+        bind();
+        render();
+
+        function svg() {
+            d3.select("body")
+                .append("svg")
+                .attr({
+                    width: w,
+                    height: h,
+                    id: "bar-chart"
+                })
+        }
+
+        function bind(sataSet) {
+            var selection = d3.select("svg#bar-chart")
+                .selectAll("rect")
+                .data(arr1);
+            selection.enter().append("rect");
+            selection.exit().remove();
+
+            //-----------文字-----------
+
+            var selection_t = d3.select("svg#bar-chart")
+                .selectAll("text")
+                .data(arr1);
+            selection_t.enter().append("text");
+            selection_t.exit().remove();
+        }
+
+        function render() {
+            d3.selectAll("#bar-chart>rect")
+                .attr({
+                    x: function(d, i) {
+                        return p + 45 * i;
+                    },
+                    y: function(d, i) {
+                        return h - p - d;
+                    },
+                    width: 40,
+                    height: function(d) {
+                        return d;
+                    },
+                    fill: function(d) {
+                        if (d < 70) {
+                            return "red";
+                        } else {
+                            return "lightgreen";
+                        }
+                    }
+                });
+
+            d3.selectAll("#bar-chart>text")
+                .attr({
+                    x: function(d, i) {
+                        return p + 45 * i + 10;
+                    },
+                    y: function(d) {
+                        return h - p + 20;
+                    },
+
+                })
+                .text(function(d) {
+                    return d;
+                });
+        }
+
+        function random(N, M) {
+
+            var rScale = d3.scale.linear()
+                .domain([0, 1])
+                .rangeRound([N, M]);
+
+            return rScale(Math.random());
+        }
+
+        function update() {
+            var num = random(10, 100);
+            arr1.push(num);
+            bind(arr1);
+            render();
+        }
+
+        function delete_arr1() {
+            arr1.shift();
+            bind(arr1);
+            render();
+        }
+    </script>
+
+    <input type="button" value="新增" onclick="update()">
+    <input type="button" value="移除" onclick="delete_arr1()">
+
+
+
+
+    <hr>
+
+    <script>
+        var arr = [85, 60, 99, 49, 77, 82, 22, 13];
+
+        bind(arr);
+        render();
+
+        function bind(dataSet) {
+            var selection = d3.select("body")
+                .selectAll("div")
+                .data(arr);
+
+            selection.enter().append("div");
+
+            selection.exit().remove();
+
+        }
+
+        function render() {
+
+            d3.selectAll("body>div")
+                .text(function(d, i) {
+                    return (i + 1) + ":" + d;
+                })
+                .style({
+                    color: function(d) {
+                        if (d < 70) {
+                            return "red";
+                        } else {
+                            return "black";
+                        }
+                    }
+                });
+        }
+
+        //       for (var i = 0; i < arr.length; i++) {
+        //            d3.select("body")
+        //                .append("div")
+        //                .datum(arr[i])
+        //                .text(function(d) {
+        //                    return d;
+        //                });
+        //        }
+        //
+    </script>
+    <hr>
+    <script>
+        //    var arr=[85,66,99,49,77,59];
+        //    
+        //    var body=d3.select("body");
+        //    
+        //    for(var i=0;i<arr.length;i++){
+        //        if(arr[i]<60){
+        //             body.append("div").text(arr[i])
+        //                 .style({color:"red"});
+        //        }
+        //        
+        //     else{
+        //          body.append("div").text(arr[i]);
+        //     }
+        //    }
+        //  
+        //  
+        d3.json("invoice-taipei.json", function(dataSet) {
+
+
+            var body = d3.select("body");
+
+            var fDataSet = dataSet.filter(function(d) {
+                return d.date === "2016/8/1" && d.city === "臺北市" && d.amount > 1000000000;
+
+
+            });
+
+            //            for (var i = 0; i < fDataSet.length; i++) {
+            //
+            //                body.append("div").text(fDataSet[i].industry + "," + fDataSet[i].number);
+            //
+            //            }
+
+
+            svg();
+            bind(dataSet);
+            render();
+
+            function svg() {
+                d3.select("body")
+                    .append("svg")
+                    .attr({
+                        width: 300,
+                        height: 300,
+
+                    })
+            }
+
+            function bind(dataSet) {
+                var selection = d3.select("svg")
+                    .selectAll("rect")
+                    .data(dataSet);
+                selection.enter().append("rect");
+                selection.exit().remove();
+
+                var selection_text = d3.select("svg")
+                    .selectAll("text")
+                    .data(dataSet);
+                selection_text.enter().append("text");
+                selection_text.exit().remove();
+            }
+
+            function render() {
+
+                var xScale = d3.scale.linear()
+                    .domain([0, 1000000000])
+                    .range([10, 300]);
+
+                d3.selectAll("rect")
+                    .attr({
+                        x: 300,
+                        y: function(d, i) {
+                            return 10 + 20 * i;
+                        },
+                        width: function(d, i) {
+                            return xScale(d.amount);
+                        },
+                        height: 18,
+                        fill: "red"
+                    });
+                d3.selectAll("text")
+                    .attr({
+                        x: 10,
+                        y: function(d, i) {
+                            return 25 + 20 * i;
+                        }
+                    }).text(function(d) {
+                        return d.industry;
+                    });
+            }
+
+
+        });
+
+
+
+
+
+
+
+
+
+        //      function mid(d) { 
+        // d.number = +d.number; 
+        // d.amount = +d.amount; 
+        // return d; 
+        // }
+    </script>
+
+
+
+
+</body>
+
+</html>
+</body>
+
+</html>
