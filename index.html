@@ -9,11 +9,16 @@
 
 <body>
 
+    <svg width="900" height="500"></svg>
     <script>
         d3.json("invoice-taipei.json", function(dataSet) {
 
 
+
+
             var body = d3.select("body");
+
+            var svg = d3.select("svg");
 
             var fDataSet = dataSet.filter(function(d) {
                 return d.date === "2016/8/1" && d.city === "臺北市" && d.amount > 1000000000;
@@ -21,86 +26,76 @@
 
             });
 
-            //            for (var i = 0; i < fDataSet.length; i++) {
+
+            for (var i = 0; i < fDataSet.length; i++) {
+
+                svg.append("text").attr({
+                    x: 10,
+                    y: 20 + 25 * i,
+                }).text(fDataSet[i].industry);
+
+                svg.append("rect").attr({
+                    x: 300,
+                    y: 10 + 25 * i,
+                    width: fDataSet[i].number / 100000,
+                    height: 20,
+                    fill: "red"
+                });
+
+            }
+
+
+
+            //            bind(fDataSet);
+            //            render(fDataSet);
             //
-            //                body.append("div").text(fDataSet[i].industry + "," + fDataSet[i].number);
             //
+            //
+            //            function bind() {
+            //                var selection = d3.select("svg")
+            //                    .selectAll("rect")
+            //                    .data(fDataSet);
+            //                selection.enter().append("rect");
+            //                selection.exit().remove();
+            //
+            //                var selection_text = d3.select("svg")
+            //                    .selectAll("text")
+            //                    .data(fDataSet);
+            //                selection_text.enter().append("text");
+            //                selection_text.exit().remove();
             //            }
-
-
-            svg();
-            bind(fDataSet);
-            render();
-
-            function svg() {
-                d3.select("body")
-                    .append("svg")
-                    .attr({
-                        width: 900,
-                        height: 300,
-
-                    })
-            }
-
-            function bind(fDataSet) {
-                var selection = d3.select("svg")
-                    .selectAll("rect")
-                    .data(fDataSet);
-                selection.enter().append("rect");
-                selection.exit().remove();
-
-                var selection_text = d3.select("svg")
-                    .selectAll("text")
-                    .data(fDataSet);
-                selection_text.enter().append("text");
-                selection_text.exit().remove();
-            }
-
-            function render() {
-
-                var xScale = d3.scale.linear()
-                    .domain([0, 1000000000])
-                    .range([10, 300]);
-
-                d3.selectAll("rect")
-                    .attr({
-                        x: 300,
-                        y: function(d, i) {
-                            return 10 + 20 * i;
-                        },
-                        width: function(d, i) {
-                            return xScale(d.amount);
-                        },
-                        height: 18,
-                        fill: "red"
-                    });
-                d3.selectAll("text")
-                    .attr({
-                        x: 10,
-                        y: function(d, i) {
-                            return 25 + 20 * i;
-                        }
-                    }).text(function(d) {
-                        return d.industry;
-                    });
-            }
-
+            //
+            //            function render() {
+            //
+            //                var xScale = d3.scale.linear()
+            //                    .domain([0, 1000000000])
+            //                    .range([10, 300]);
+            //
+            //                d3.selectAll("rect")
+            //                    .attr({
+            //                        x: 300,
+            //                        y: function(d, i) {
+            //                            return 10 + 20 * i;
+            //                        },
+            //                        width: function(d, i) {
+            //                            return xScale(d.amount);
+            //                        },
+            //                        height: 18,
+            //                        fill: "red"
+            //                    });
+            //                d3.selectAll("text")
+            //                    .attr({
+            //                        x: 10,
+            //                        y: function(d, i) {
+            //                            return 25 + 20 * i;
+            //                        }
+            //                    }).text(function(d) {
+            //                        return d.industry;
+            //                    });
+            //            }
+            //
 
         });
-
-
-
-
-
-
-
-
-
-        //      function mid(d) { 
-        // d.number = +d.number; 
-        // d.amount = +d.amount; 
-        // return d; 
-        // }
 
     </script>
 
